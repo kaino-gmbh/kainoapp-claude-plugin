@@ -1,6 +1,6 @@
 ---
 name: new-phase
-description: Add a new work package to an existing kainoapp app on kainoapp.com from a Claude Design. Use when the user, in English or German, wants to change or extend an app that already runs, e.g. "new design for my app", "next phase", "add these screens to <app>", "Neues Arbeitspaket für meine App", "Bau das in meine bestehende kainoapp ein", "Erweitere <app> um diese Screens". For an app that does not exist yet, use new-project.
+description: Add a new work package to an existing kainoapp app on kainoapp.com from a Claude Design. Use when the user, in English or German, wants to change or extend an app that already runs, e.g. "new design for my app", "next phase", "add these screens to my app", "Neues Arbeitspaket für meine App", "Bau das in meine bestehende kainoapp ein", "Erweitere meine App um diese Screens". For an app that does not exist yet, use new-project.
 ---
 
 # New work package for an existing app
