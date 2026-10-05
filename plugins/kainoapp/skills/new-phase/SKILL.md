@@ -46,10 +46,12 @@ changes it.
 - `description`: the brief of the CHANGE, with the headings Ziel, Umfang, Baut auf,
   Abgrenzung, Offene Punkte. Per screen: what changes versus the running app.
 - `files`: the design as text files, the same rules as for a new app: root-level `*.html`
-  prototypes (at least one that is not `*.dc.html`) and the design's `*.dc.html` when it
-  has one, the stylesheets and scripts they load, the tokens and design system files under
-  `uploads/` when present; only `html`, `css`, `js`, `json`, `md`, `txt`, `svg`; at most
-  40 files, 5 MB per file, 8 MB together.
+  prototypes and the design's `*.dc.html` when it has one (a `*.dc.html` alone is
+  complete), every stylesheet and script the pages load (`support.js` included), the
+  tokens and design system files under `uploads/` when present; only `html`, `css`, `js`,
+  `json`, `md`, `txt`, `svg`; at most 40 files, 5 MB per file, 8 MB together. kainoapp
+  refuses the call when a page loads or links a text file that is not among the files.
+  Never write a page of your own around a design file.
 - Each `content` is the file exactly as it stands in the design, in full: the feature
   planning and the builds read these files and nothing else of the conversation. Do not
   shorten, summarise, reformat or rewrite a file, and do not drop parts of it; icons stay

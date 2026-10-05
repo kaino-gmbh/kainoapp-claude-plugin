@@ -49,10 +49,12 @@ Pass the design as text files in `files` (each with a relative `path` and its `c
 The planning, the theme takeover and every build read these files as the design, and
 nothing else of the conversation reaches them:
 
-- every prototype screen as a root-level `*.html` (at least one that is not `*.dc.html`),
-  and the design's `*.dc.html` when it has one;
-- the stylesheets and scripts the prototypes load, under the paths the prototypes
-  reference;
+- every prototype screen as a root-level `*.html`, and the design's `*.dc.html` when it
+  has one; a design that is a `*.dc.html` alone is complete as it is;
+- every stylesheet and script the pages load (`support.js` of a `*.dc.html` included),
+  under the paths the pages reference. kainoapp refuses the call when a page loads or
+  links a text file that is not among the files, and names it;
+- never write a page of your own around a design file: send the design file itself;
 - `uploads/<Name>_Design_Tokens.json` and `uploads/<Name>_Design_System.md` when the
   design has them;
 - only `html`, `css`, `js`, `json`, `md`, `txt`, `svg`; at most 40 files, 5 MB per file,
