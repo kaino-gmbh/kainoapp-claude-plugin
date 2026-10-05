@@ -13,8 +13,9 @@ later with new designs, without leaving your Claude conversation.
   from its design, designs the change with you, and after your go sends it as a new work
   package that is planned into features.
 
-You can also just describe what you want ("make this design an app"); Claude picks the
-matching skill.
+You can also just describe what you want, in English or German ("make this design an
+app", "Baue mir eine kainoapp aus dem aktuellen Stand"); Claude picks the matching
+skill.
 
 ## Connecting
 

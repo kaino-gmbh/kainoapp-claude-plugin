@@ -1,6 +1,6 @@
 ---
 name: new-project
-description: Create a new kainoapp app from the Claude Design in this conversation. Use when the user wants to turn their design into a running app on kainoapp.com ("make this an app", "build this design", "new project").
+description: Create a new kainoapp app on kainoapp.com from the Claude Design in this conversation. Use when the user, in English or German, wants the design or its current state turned into a running app, or asks for "a kainoapp" (an app on kainoapp.com), e.g. "make this an app", "build this design", "new project in kainoapp", "make a kainoapp from this", "Baue mir eine kainoapp aus dem aktuellen Stand", "Mach daraus eine App", "Neues Projekt aus diesem Design". For an app that already runs, use new-phase.
 ---
 
 # New app from a Claude Design
@@ -12,6 +12,12 @@ the one write call. Answer in the user's language.
 
 The tools come from the `kainoapp` connector. If they are missing, ask the user to
 connect it under the plugin's Connectors tab and stop.
+
+The app exists only once `project-create-from-design` has answered with its name. Until
+then, never tell the user that an app was built, created, set up or deployed, and never
+make up a name, an address or a state: a prototype in this conversation is a design, not
+an app. Every fact about the app comes from a tool answer. If a call fails or was not
+made, say so.
 
 ## 1. Find the design
 
