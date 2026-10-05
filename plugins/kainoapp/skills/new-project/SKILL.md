@@ -28,8 +28,9 @@ first and stop.
 ## 2. Make sure the app is new
 
 Call `project-list` and show the user the projects whose name or display name could be
-this app. Ask whether one of them is it. If yes, stop and point to `/kainoapp:new-phase`,
-which adds the design to an existing app.
+this app. Ask whether one of them is it. If yes, stop: when that app was created without
+this design or with an incomplete one, point to `/kainoapp:attach-design`; when the
+design changes the app, point to `/kainoapp:new-phase`.
 
 ## 3. Propose the app
 

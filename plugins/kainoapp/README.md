@@ -12,6 +12,9 @@ later with new designs, without leaving your Claude conversation.
 - `/kainoapp:new-phase` lets you pick one of your apps, shows where the built app departs
   from its design, designs the change with you, and after your go sends it as a new work
   package that is planned into features.
+- `/kainoapp:attach-design` gives an app that was created without its design, or with
+  an incomplete one, the design of your conversation as if it had come with the creation:
+  the planned work packages keep their order and build with it.
 
 You can also just describe what you want, in English or German ("make this design an
 app", "Baue mir eine kainoapp aus dem aktuellen Stand"); Claude picks the matching
