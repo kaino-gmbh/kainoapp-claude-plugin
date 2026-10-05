@@ -39,13 +39,26 @@ Propose and let the user adjust:
 
 ## 4. Collect the design files
 
-Pass the design as text files in `files` (each with a relative `path` and its `content`):
+Pass the design as text files in `files` (each with a relative `path` and its `content`).
+The planning, the theme takeover and every build read these files as the design, and
+nothing else of the conversation reaches them:
 
-- every prototype screen as a root-level `*.html` (at least one that is not `*.dc.html`);
+- every prototype screen as a root-level `*.html` (at least one that is not `*.dc.html`),
+  and the design's `*.dc.html` when it has one;
+- the stylesheets and scripts the prototypes load, under the paths the prototypes
+  reference;
 - `uploads/<Name>_Design_Tokens.json` and `uploads/<Name>_Design_System.md` when the
   design has them;
 - only `html`, `css`, `js`, `json`, `md`, `txt`, `svg`; at most 40 files, 5 MB per file,
-  8 MB together. Images and fonts are not transferred; mention them to the user.
+  8 MB together.
+
+Each `content` is the file exactly as it stands in the design, in full. Do not shorten,
+summarise, reformat or rewrite a file, and do not drop parts of it: icons stay as they
+are (inline `<svg>` stays inline, an icon file goes along as `*.svg`).
+
+What cannot be transferred (images, fonts, a file over the limits) goes into the
+`description` as a last paragraph starting with `Nicht übertragen:`, naming each item and
+where it appears, so the planning knows the gap. Mention it to the user as well.
 
 ## 5. Ask for the go
 
