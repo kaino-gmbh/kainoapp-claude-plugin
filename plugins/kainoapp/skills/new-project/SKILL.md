@@ -45,9 +45,9 @@ Propose and let the user adjust:
 
 ## 4. Collect the design files
 
-Pass the design as text files in `files` (each with a relative `path` and its `content`).
-The planning, the theme takeover and every build read these files as the design, and
-nothing else of the conversation reaches them:
+List the design's text files, each with its relative path. The planning, the theme
+takeover and every build read these files as the design, and nothing else of the
+conversation reaches them:
 
 - every prototype screen as a root-level `*.html`, and the design's `*.dc.html` when it
   has one; a design that is a `*.dc.html` alone is complete as it is;
@@ -60,7 +60,7 @@ nothing else of the conversation reaches them:
 - only `html`, `css`, `js`, `json`, `md`, `txt`, `svg`; at most 40 files, 5 MB per file,
   8 MB together.
 
-Each `content` is the file exactly as it stands in the design, in full. Do not shorten,
+Each file goes exactly as it stands in the design, in full. Do not shorten,
 summarise, reformat or rewrite a file, and do not drop parts of it: icons stay as they
 are (inline `<svg>` stays inline, an icon file goes along as `*.svg`).
 
@@ -68,15 +68,39 @@ What cannot be transferred (images, fonts, a file over the limits) goes into the
 `description` as a last paragraph starting with `Nicht übertragen:`, naming each item and
 where it appears, so the planning knows the gap. Mention it to the user as well.
 
-## 5. Ask for the go
+## 5. Send the design
+
+Send every design file with `design-upload`, one file per call, before the create call.
+It creates nothing and costs nothing. A design file never goes into the create call
+itself: a call that long ends inside its arguments and reaches kainoapp empty.
+
+- The first call omits `upload`; its answer names the upload id. Pass it in every further
+  call.
+- A file of at most 20 000 characters goes as part 1 of 1 (`part` and `parts` may be
+  left out). A longer file goes in parts: decide `parts` first (the length divided by
+  20 000, rounded up), then send part 1, 2, ... with the same `parts`, each the exact next
+  slice of the file. kainoapp joins them without separator, so cut anywhere, but leave
+  nothing out and add nothing.
+- Never leave a file out because it is long, and never send a shortened or rewritten
+  version instead.
+- After the last file, read the answer: `complete` is true and no file lists `missing`
+  parts. Send a missing part again; a part sent again replaces itself.
+- `upload_not_found`: the upload expired (24 hours after its last part). Start over
+  without `upload` and send every file again.
+- `too_large`: the file or the whole design breaks the limits. Name it under
+  `Nicht übertragen:` and tell the user.
+
+## 6. Ask for the go
 
 Summarise in a few lines: the short name, the display name, the brief, the number of
-files, and that the call creates the infrastructure and starts the planning, which costs
-money. Call nothing until the user clearly says yes.
+files and bytes the last `design-upload` answer lists, and that the call creates the
+infrastructure and starts the planning, which costs money. Call nothing until the user
+clearly says yes.
 
-## 6. Create the app
+## 7. Create the app
 
-Call `project-create-from-design` with `name`, `display_name`, `description` and `files`.
+Call `project-create-from-design` with `name`, `display_name`, `description` and `upload`.
+Never put a design file into this call.
 
 - Success: report the final short name from the answer (with its random part) and the
   address `https://<final name>.kainoapp.com`. Say that the setup runs in the background,
@@ -84,10 +108,13 @@ Call `project-create-from-design` with `name`, `display_name`, `description` and
   time.
 - `project_exists`: the answer names the existing app. Do not create anything; offer
   `/kainoapp:new-phase` for that app.
+- `empty_arguments`: the call was too long and arrived empty. The design goes through
+  `design-upload` only; send the call again with `upload`.
 - A validation error: show it, fix the named field with the user, and ask for the go again
-  only if the change is material.
+  only if the change is material. A missing part or a missing referenced file: send it
+  with `design-upload` and call again.
 
-## 7. Report the state
+## 8. Report the state
 
 When the user asks how far the app is, call `project-status` with the final short name
 and answer in a few lines:

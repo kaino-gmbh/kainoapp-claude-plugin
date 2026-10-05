@@ -45,14 +45,14 @@ changes it.
   or rephrase it.
 - `description`: the brief of the CHANGE, with the headings Ziel, Umfang, Baut auf,
   Abgrenzung, Offene Punkte. Per screen: what changes versus the running app.
-- `files`: the design as text files, the same rules as for a new app: root-level `*.html`
+- The design files, the same rules as for a new app: root-level `*.html`
   prototypes and the design's `*.dc.html` when it has one (a `*.dc.html` alone is
   complete), every stylesheet and script the pages load (`support.js` included), the
   tokens and design system files under `uploads/` when present; only `html`, `css`, `js`,
   `json`, `md`, `txt`, `svg`; at most 40 files, 5 MB per file, 8 MB together. kainoapp
   refuses the call when a page loads or links a text file that is not among the files.
   Never write a page of your own around a design file.
-- Each `content` is the file exactly as it stands in the design, in full: the feature
+- Each file goes exactly as it stands in the design, in full: the feature
   planning and the builds read these files and nothing else of the conversation. Do not
   shorten, summarise, reformat or rewrite a file, and do not drop parts of it; icons stay
   as they are (inline `<svg>` stays inline, an icon file goes along as `*.svg`).
@@ -60,14 +60,38 @@ changes it.
   `Offene Punkte` in the `description` as `Nicht übertragen:`, naming each item and where
   it appears. Mention it to the user as well.
 
-## 5. Ask for the go
+## 5. Send the design
 
-Summarise the app, the title, the brief and the number of files, and that the call starts
-the feature planning, which costs money. Call nothing until the user clearly says yes.
+Send every design file with `design-upload`, one file per call, before the create call.
+It creates nothing and costs nothing. A design file never goes into the create call
+itself: a call that long ends inside its arguments and reaches kainoapp empty.
 
-## 6. Send it
+- The first call omits `upload`; its answer names the upload id. Pass it in every further
+  call.
+- A file of at most 20 000 characters goes as part 1 of 1 (`part` and `parts` may be
+  left out). A longer file goes in parts: decide `parts` first (the length divided by
+  20 000, rounded up), then send part 1, 2, ... with the same `parts`, each the exact next
+  slice of the file. kainoapp joins them without separator, so cut anywhere, but leave
+  nothing out and add nothing.
+- Never leave a file out because it is long, and never send a shortened or rewritten
+  version instead.
+- After the last file, read the answer: `complete` is true and no file lists `missing`
+  parts. Send a missing part again; a part sent again replaces itself.
+- `upload_not_found`: the upload expired (24 hours after its last part). Start over
+  without `upload` and send every file again.
+- `too_large`: the file or the whole design breaks the limits. Name it under
+  `Offene Punkte` as `Nicht übertragen:` and tell the user.
 
-Call `phase-create-from-design` with `project`, `name`, `description` and `files`.
+## 6. Ask for the go
+
+Summarise the app, the title, the brief and the number of files and bytes the last
+`design-upload` answer lists, and that the call starts the feature planning, which costs
+money. Call nothing until the user clearly says yes.
+
+## 7. Create the work package
+
+Call `phase-create-from-design` with `project`, `name`, `description` and `upload`. Never
+put a design file into this call.
 
 - `planning` is `started`: the work package exists and the features are being planned;
   the user is notified when they are ready. Asked for the state later, call
@@ -75,5 +99,8 @@ Call `phase-create-from-design` with `project`, `name`, `description` and `files
   status.
 - `planning` is `no_repository`: the work package and the design are stored; the
   planning starts once the app's repository is set up. Tell the user.
+- `empty_arguments`: the call was too long and arrived empty. The design goes through
+  `design-upload` only; send the call again with `upload`.
 - A validation error: show it, fix the named field with the user, and ask for the go again
-  only if the change is material.
+  only if the change is material. A missing part or a missing referenced file: send it
+  with `design-upload` and call again.
