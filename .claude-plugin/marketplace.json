@@ -1,0 +1,15 @@
+{
+  "name": "kainoapp",
+  "description": "Turn a Claude Design into a running kainoapp app and extend it with new designs.",
+  "owner": {
+    "name": "kaino"
+  },
+  "plugins": [
+    {
+      "name": "kainoapp",
+      "version": "1.0.1",
+      "source": "./plugins/kainoapp",
+      "description": "Create a kainoapp app from a Claude Design, or add a work package to an existing app."
+    }
+  ]
+}

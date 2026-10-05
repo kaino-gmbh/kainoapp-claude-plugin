@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "kainoapp": {
+      "type": "http",
+      "url": "https://kainoapp.com/mcp/features"
+    }
+  }
+}
