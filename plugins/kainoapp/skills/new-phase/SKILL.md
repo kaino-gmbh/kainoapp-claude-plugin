@@ -97,8 +97,9 @@ put a design file into this call.
   the user is notified when they are ready. Asked for the state later, call
   `project-status` with the `project` and report the work package with its features per
   status.
-- `planning` is `no_repository`: the work package and the design are stored; the
-  planning starts once the app's repository is set up. Tell the user.
+- `planning` is anything else (`not_started` while the app is still being set up): the
+  work package and the design are stored, the planning has not started. Tell the user
+  what the answer's `next` says.
 - `empty_arguments`: the call was too long and arrived empty. The design goes through
   `design-upload` only; send the call again with `upload`.
 - A validation error: show it, fix the named field with the user, and ask for the go again

@@ -5,10 +5,10 @@ description: Create a new kainoapp app on kainoapp.com from the Claude Design in
 
 # New app from a Claude Design
 
-You turn the design in this conversation into a new kainoapp app. kainoapp creates the
-repository, the server and the address `https://<name>.kainoapp.com`, then plans the
-work. This costs real money (servers, build runs), so the user's explicit go comes before
-the one write call. Answer in the user's language.
+You turn the design in this conversation into a new kainoapp app. kainoapp sets the app
+up at the address `https://<name>.kainoapp.com`, then plans the work. This costs real
+money (the setup and the build runs), so the user's explicit go comes before the one write
+call. Answer in the user's language.
 
 The tools come from the `kainoapp` connector. If they are missing, ask the user to
 connect it under the plugin's Connectors tab and stop.
@@ -120,9 +120,11 @@ Never put a design file into this call.
 When the user asks how far the app is, call `project-status` with the final short name
 and answer in a few lines:
 
-- `setup.state` and the steps that are done, running or failed. A failed step: say that
-  the operator has been notified; the answer carries no error text by design.
-- `urls.production` once it is set: the app is reachable there.
+- `setup.state`: `running` or `queued` (the app is being set up), `completed` (it is set up) or
+  `failed` (the operator has been notified; the answer carries no error text by design).
+  Report the state only: never ask for or name the steps of the setup.
+- `urls.production` once it is set: the app is reachable there. It is the only address
+  to report.
 - `planning.state`: `running` (the work packages are being planned), `waiting_quota`
   (planning resumes at `planning.retry_at`), `done`, `failed` (the operator has been
   notified) or `pending` (no automatic planning run is recorded; for an older app the

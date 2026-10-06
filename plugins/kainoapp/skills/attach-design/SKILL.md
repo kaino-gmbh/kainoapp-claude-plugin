@@ -6,8 +6,8 @@ description: Give an existing kainoapp app on kainoapp.com the Claude Design it 
 # Attach the design to an existing app
 
 You give an existing kainoapp app the design of this conversation as its design, as if it
-had come with the creation. kainoapp replaces the app's design and the design in its
-repository, which every planned work package reads when it is built. No work package is
+had come with the creation. kainoapp replaces the app's design, which every planned work
+package reads when it is built. No work package is
 added and nothing is planned again. Answer in the user's language.
 
 The tools come from the `kainoapp` connector. If they are missing, ask the user to
@@ -67,12 +67,9 @@ built. Call nothing until the user clearly says yes.
 
 Call `project-attach-design` with `project` and `upload`.
 
-- `replaced` with `repository: committed`: the design is the app's design in kainoapp
-  and in its repository; every work package builds with it. Report that in one or two
-  sentences.
-- `repository: pending_setup`: the app is still being set up; the setup puts the design
-  into the repository. Tell the user.
-- `repository: failed`: the design is attached in kainoapp, the repository was not
-  updated. Call `project-attach-design` again with a new upload of the same files.
+- `replaced`: the answer's `next` says what happens to the app; report it in one or two
+  sentences. When `next` says that the same call tries again ("derselbe Aufruf versucht
+  es erneut"), the design is not yet taken over for the builds: call
+  `project-attach-design` again with a new upload of the same files.
 - `empty_arguments`: the call was too long; the design goes through `design-upload` only.
 - `project_not_found` or a validation error: show it and fix it with the user.

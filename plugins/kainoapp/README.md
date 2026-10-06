@@ -7,7 +7,7 @@ later with new designs, without leaving your Claude conversation.
 
 - `/kainoapp:new-project` takes the design in your conversation, checks that the app does
   not exist yet, agrees the app's name and brief with you, and after your explicit go
-  creates the app at `https://<name>.kainoapp.com`: repository, server, address and a
+  creates the app at `https://<name>.kainoapp.com`, sets it up and makes a
   plan of the work.
 - `/kainoapp:new-phase` lets you pick one of your apps, shows where the built app departs
   from its design, designs the change with you, and after your go sends it as a new work
