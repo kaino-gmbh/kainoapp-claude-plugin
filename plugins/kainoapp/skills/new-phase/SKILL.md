@@ -31,6 +31,43 @@ theme and component sources of the built app, and the features built since that 
 Summarise for the user where the built app departs from the design. Read further
 `design_files` or `components` only when the summary needs them.
 
+The answer may also carry `snapshot`: the current state of the running app, its pages as
+they look now. Without `snapshot`, skip the rest of this step and say nothing about it.
+Otherwise ask the user whether the current state shall come into the design. When
+`snapshot.state` is `pending`, say roughly how long it takes: `estimated_seconds` in
+minutes, rounded.
+
+- No: go on without it.
+- Yes and `ready`: fetch it now (below).
+- Yes and `pending`: go on with section 3 while it is produced. After each of your own
+  replies, call `project-get-design` with `project` and `snapshot_only: true` (the answer
+  holds only `project` and `snapshot`) and fetch once it is `ready`. When the user is done
+  with the design before then: up to 10 times, run `sleep 30` in your code execution
+  environment and then the same `snapshot_only` call; stop at any state other than
+  `pending`.
+- `unavailable`, or still `pending` after that: tell the user in one sentence that the
+  current state is not available now, and go on without it.
+
+Fetch: run the reachability check of section 5 first; when it fails, tell the user what
+section 5 says. Then, with the `url` of the `ready` answer:
+`rm -rf /tmp/ist-stand /tmp/ist-stand.zip && curl -sSf -o /tmp/ist-stand.zip "<url>" && mkdir /tmp/ist-stand && cd /tmp/ist-stand && unzip -q /tmp/ist-stand.zip`
+(without `unzip`, use Python's `zipfile`). The `url` is valid for 30 minutes: a `403` or
+`404`, or a `url` older than that, gets one new `snapshot_only` call and one more try with
+its `url`.
+
+Read `manifest.json`. Add every entry of its `pages` to the Claude Design canvas as its
+own page under `ist-stand/` in the canvas project directory, from its `html` file
+unchanged, named by its `title`; keep the archive's paths below `ist-stand/`
+(`ist-stand/pages/…`, `ist-stand/assets/…`), so each page finds its assets. Its
+`screenshot` is how the page renders in the app: the comparison for the canvas page.
+When `theme_css` is set, that file is the app's current theme: start the design system
+of the change from it. Never edit a page under `ist-stand/`; the changed screens are new
+prototypes beside them.
+
+A design file never loads or links anything under `ist-stand/`: no stylesheet, script,
+page or link there. Copy what the design needs, such as the tokens of
+`ist-stand/theme.css`, into the design's own files.
+
 ## 3. Design the change
 
 Work with the user on the Claude Design in this conversation: the design system and the
@@ -50,8 +87,9 @@ changes it.
   complete), every stylesheet and script the pages load (`support.js` included), the
   tokens and design system files under `uploads/` when present; only `html`, `css`, `js`,
   `json`, `md`, `txt`, `svg`; at most 40 files, 5 MB per file, 8 MB together. kainoapp
-  refuses the call when a page loads or links a text file that is not among the files.
-  Never write a page of your own around a design file.
+  refuses the call when a page loads or links a text file that is not among the files,
+  and when it loads or links anything under `ist-stand/`. Never write a page of your own
+  around a design file.
 - Each file goes exactly as it stands in the design, in full: the feature
   planning and the builds read these files and nothing else of the conversation. Do not
   shorten, summarise, reformat or rewrite a file, and do not drop parts of it; icons stay
@@ -81,8 +119,9 @@ Ask them to say when it is done, then run the check again.
 1. Call `design-upload-url`. Its answer names `upload` and a `url` that is valid for 30
    minutes.
 2. Pack the design files of section 4 from that directory as they stand, with their
-   paths: `rm -f /tmp/design.zip && cd <directory> && zip -qr /tmp/design.zip . -i '*.html' '*.css' '*.js' '*.json'
-   '*.md' '*.txt' '*.svg'` (without `zip`, use Python's `zipfile`).
+   paths: `rm -f /tmp/design.zip && cd <directory> && zip -qr /tmp/design.zip . -x 'ist-stand/*' -i '*.html' '*.css' '*.js' '*.json'
+   '*.md' '*.txt' '*.svg'` (without `zip`, use Python's `zipfile` and leave out
+   `ist-stand/`). `-x 'ist-stand/*'` keeps the current state of the app out of the upload.
 3. Upload it: `curl -sS -F "file=@/tmp/design.zip" "<url>"`. The answer lists the files
    and bytes kainoapp received under `files`.
 
@@ -111,4 +150,7 @@ put a design file into this call.
   what the answer's `next` says.
 - A validation error: show it, fix the named field with the user, and ask for the go again
   only if the change is material. A missing referenced file: add it to the ZIP, upload
-  again through a new `design-upload-url` and call again.
+  again through a new `design-upload-url` and call again. A reference that points under
+  `ist-stand/`: remove it from the prototype (copy what the page needs into the design's
+  own files), never add the `ist-stand/` file to the ZIP; then upload again and call
+  again.

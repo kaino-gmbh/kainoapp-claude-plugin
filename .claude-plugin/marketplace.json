@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "kainoapp",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "source": "./plugins/kainoapp",
       "description": "Create a kainoapp app from a Claude Design, or add a work package to an existing app."
     }
