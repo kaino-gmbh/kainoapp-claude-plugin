@@ -71,30 +71,38 @@ where it appears, so the planning knows the gap. Mention it to the user as well.
 
 ## 5. Send the design
 
-Send every design file with `design-upload`, one file per call, before the create call.
-It creates nothing and costs nothing. A design file never goes into the create call
-itself: a call that long ends inside its arguments and reaches kainoapp empty.
+The design goes to kainoapp in one upload from your code execution environment, never
+in a tool argument. It creates nothing and costs nothing.
 
-- The first call omits `upload`; its answer names the upload id. Pass it in every further
-  call.
-- A file of at most 20 000 characters goes as part 1 of 1 (`part` and `parts` may be
-  left out). A longer file goes in parts: decide `parts` first (the length divided by
-  20 000, rounded up), then send part 1, 2, ... with the same `parts`, each the exact next
-  slice of the file. kainoapp joins them without separator, so cut anywhere, but leave
-  nothing out and add nothing.
-- Never leave a file out because it is long, and never send a shortened or rewritten
-  version instead.
-- After the last file, read the answer: `complete` is true and no file lists `missing`
-  parts. Send a missing part again; a part sent again replaces itself.
-- `upload_not_found`: the upload expired (24 hours after its last part). Start over
-  without `upload` and send every file again.
-- `too_large`: the file or the whole design breaks the limits. Name it under
-  `Nicht übertragen:` and tell the user.
+The design files exist as files in that environment: Claude Design writes them into the
+canvas project directory of its scratchpad before it saves them. Find the directory with
+`find / -path '*canvas/project/*' -name '*.dc.html' -not -path '/proc/*' 2>/dev/null`.
+
+Check first that the environment reaches kainoapp, before you pack anything:
+`curl -sS -o /dev/null -w "%{http_code}\n" https://kainoapp.com/up`. `200`: go on.
+Anything else (a network or DNS error, `403 blocked-by-allowlist`, code execution off):
+stop and tell the user, in their language: this is a setting of their Claude account, not
+an error of kainoapp; Claude may send files only to domains the account allows. They turn
+on Settings › Capabilities › Code execution and file creation and add `kainoapp.com` under
+Additional allowed domains (in a Team or Enterprise organisation, the admin does this).
+Ask them to say when it is done, then run the check again.
+
+1. Call `design-upload-url`. Its answer names `upload` and a `url` that is valid for 30
+   minutes.
+2. Pack the design files of section 4 from that directory as they stand, with their
+   paths: `rm -f /tmp/design.zip && cd <directory> && zip -qr /tmp/design.zip . -i '*.html' '*.css' '*.js' '*.json'
+   '*.md' '*.txt' '*.svg'` (without `zip`, use Python's `zipfile`).
+3. Upload it: `curl -sS -F "file=@/tmp/design.zip" "<url>"`. The answer lists the files
+   and bytes kainoapp received under `files`.
+
+Never print a design file. An upload that fails with a network error: run the check
+above again. A `url` older than 30 minutes or an expired upload: call `design-upload-url`
+again. A refusal for size: name the file under `Nicht übertragen:` and tell the user.
 
 ## 6. Ask for the go
 
 Summarise in a few lines: the short name, the display name, the brief, the number of
-files and bytes the last `design-upload` answer lists, and that the call creates the
+files and bytes the last upload answer lists, and that the call creates the
 infrastructure and starts the planning, which costs money. Call nothing until the user
 clearly says yes.
 
@@ -109,11 +117,9 @@ Never put a design file into this call.
   time.
 - `project_exists`: the answer names the existing app. Do not create anything; offer
   `/kainoapp:new-phase` for that app.
-- `empty_arguments`: the call was too long and arrived empty. The design goes through
-  `design-upload` only; send the call again with `upload`.
 - A validation error: show it, fix the named field with the user, and ask for the go again
-  only if the change is material. A missing part or a missing referenced file: send it
-  with `design-upload` and call again.
+  only if the change is material. A missing referenced file: add it to the ZIP, upload
+  again through a new `design-upload-url` and call again.
 
 ## 8. Report the state
 

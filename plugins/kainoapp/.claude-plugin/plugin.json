@@ -1,6 +1,6 @@
 {
   "name": "kainoapp",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "displayName": "kainoapp",
   "description": "Create a kainoapp app from a Claude Design, or add a work package to an existing app.",
   "author": {

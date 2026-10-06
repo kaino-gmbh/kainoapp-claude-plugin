@@ -26,6 +26,10 @@ After installing the plugin, connect the `kainoapp` connector in the plugin's
 Connectors tab and sign in. Every write call asks for your explicit go in the chat first,
 because it creates infrastructure or starts planning runs that are billed.
 
+Claude uploads your design from its code execution environment straight to
+`kainoapp.com`. Once, under Settings › Capabilities › Code execution and file creation:
+turn code execution on and add `kainoapp.com` under Additional allowed domains.
+
 ## What data it sends
 
 The connector sends to `https://kainoapp.com/mcp/features`: the app name, display name and brief you agreed

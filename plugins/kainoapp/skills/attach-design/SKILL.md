@@ -43,23 +43,37 @@ a file. Images and fonts cannot be sent; tell the user which ones the design use
 
 ## 3. Send the design
 
-Send every design file with `design-upload`, one file per call. It creates nothing and
-costs nothing. A design file never goes into `project-attach-design` itself: a call that
-long ends inside its arguments and reaches kainoapp empty.
+The design goes to kainoapp in one upload from your code execution environment, never
+in a tool argument. It creates nothing and costs nothing.
 
-- The first call omits `upload`; its answer names the upload id. Pass it in every further
-  call.
-- A file of at most 20 000 characters goes as part 1 of 1. A longer file goes in parts:
-  decide `parts` first (the length divided by 20 000, rounded up), then send part 1, 2,
-  ... with the same `parts`, each the exact next slice of the file. kainoapp joins them
-  without separator, so cut anywhere, but leave nothing out and add nothing.
-- After the last file, read the answer: `complete` is true and no file lists `missing`
-  parts. Send a missing part again; a part sent again replaces itself.
-- `upload_not_found`: the upload expired. Start over without `upload`.
+The design files exist as files in that environment: Claude Design writes them into the
+canvas project directory of its scratchpad before it saves them. Find the directory with
+`find / -path '*canvas/project/*' -name '*.dc.html' -not -path '/proc/*' 2>/dev/null`.
+
+Check first that the environment reaches kainoapp, before you pack anything:
+`curl -sS -o /dev/null -w "%{http_code}\n" https://kainoapp.com/up`. `200`: go on.
+Anything else (a network or DNS error, `403 blocked-by-allowlist`, code execution off):
+stop and tell the user, in their language: this is a setting of their Claude account, not
+an error of kainoapp; Claude may send files only to domains the account allows. They turn
+on Settings › Capabilities › Code execution and file creation and add `kainoapp.com` under
+Additional allowed domains (in a Team or Enterprise organisation, the admin does this).
+Ask them to say when it is done, then run the check again.
+
+1. Call `design-upload-url`. Its answer names `upload` and a `url` that is valid for 30
+   minutes.
+2. Pack the design files of section 2 from that directory as they stand, with their
+   paths: `rm -f /tmp/design.zip && cd <directory> && zip -qr /tmp/design.zip . -i '*.html' '*.css' '*.js' '*.json'
+   '*.md' '*.txt' '*.svg'` (without `zip`, use Python's `zipfile`).
+3. Upload it: `curl -sS -F "file=@/tmp/design.zip" "<url>"`. The answer lists the files
+   and bytes kainoapp received under `files`.
+
+Never print a design file. An upload that fails with a network error: run the check
+above again. A `url` older than 30 minutes or an expired upload: call `design-upload-url`
+again.
 
 ## 4. Ask for the go
 
-Summarise: the app, the number of files and bytes the last `design-upload` answer lists,
+Summarise: the app, the number of files and bytes the last upload answer lists,
 and that the design replaces the app's current design for every work package not yet
 built. Call nothing until the user clearly says yes.
 
@@ -71,5 +85,4 @@ Call `project-attach-design` with `project` and `upload`.
   sentences. When `next` says that the same call tries again ("derselbe Aufruf versucht
   es erneut"), the design is not yet taken over for the builds: call
   `project-attach-design` again with a new upload of the same files.
-- `empty_arguments`: the call was too long; the design goes through `design-upload` only.
 - `project_not_found` or a validation error: show it and fix it with the user.
