@@ -17,6 +17,10 @@ later with new designs, without leaving your Claude conversation.
   an incomplete one, the design of your conversation as if it had come with the creation:
   the planned work packages keep their order and build with it.
 
+When the system gives your account an app dashboard, Claude puts its link first after
+each of these steps and when you ask how far the app is: the dashboard shows the setup,
+the planning and the build of the app live, and you answer the open questions there.
+
 You can also just describe what you want, in English or German ("make this design an
 app", "Baue mir eine kainoapp aus dem aktuellen Stand"); Claude picks the matching
 skill.

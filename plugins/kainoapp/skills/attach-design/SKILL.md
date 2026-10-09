@@ -17,6 +17,9 @@ The design is attached only once `project-attach-design` has answered `replaced`
 then, never tell the user that it was attached, and never make up a state: every fact
 comes from a tool answer. If a call fails or was not made, say so.
 
+A link to the app's dashboard comes only from `dashboard_url` in a tool answer, exactly as
+it stands. When an answer has no `dashboard_url`, say nothing about a dashboard.
+
 ## 1. Choose the app
 
 Call `project-list` and let the user pick the app (show the display name and the short
@@ -122,10 +125,15 @@ built. Call nothing until the user clearly says yes.
 
 Call `project-attach-design` with `project` and `upload`.
 
-- `replaced`: the answer's `next` says what happens to the app; report it in one or two
-  sentences. When `next` says that the same call tries again ("derselbe Aufruf versucht
-  es erneut"), the design is not yet taken over for the builds: call
-  `project-attach-design` again with a new upload of the same files.
+- `replaced`: when the answer carries `dashboard_url`, put that link first, on a line of
+  its own, and send the user there: the design is attached, and the dashboard shows live
+  what happens with the app (its setup, the planning of the work packages, the build
+  progress of the features), where they answer the open questions right away, one at a
+  time; any of them may stay empty. The answer's `next` says what happens to the app;
+  report it in one or two sentences. When `next` says that the same call tries again
+  ("derselbe Aufruf versucht es erneut"), the design is not yet taken over for the
+  builds: call `project-attach-design` again with a new upload of the same files, and
+  give the dashboard link only once.
 - `project_not_found` or a validation error: show it and fix it with the user. A missing
   referenced file that points under `ist-stand/`: remove the reference from the
   prototype (copy what the page needs into the design's own files), never add the

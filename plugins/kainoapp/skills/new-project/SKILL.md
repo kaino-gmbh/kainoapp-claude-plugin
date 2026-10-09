@@ -19,6 +19,9 @@ make up a name, an address or a state: a prototype in this conversation is a des
 an app. Every fact about the app comes from a tool answer. If a call fails or was not
 made, say so.
 
+A link to the app's dashboard comes only from `dashboard_url` in a tool answer, exactly as
+it stands. When an answer has no `dashboard_url`, say nothing about a dashboard.
+
 ## 1. Find the design
 
 Use the Claude Design artifact of this conversation (its prototype screens, design
@@ -111,10 +114,18 @@ clearly says yes.
 Call `project-create-from-design` with `name`, `display_name`, `description` and `upload`.
 Never put a design file into this call.
 
-- Success: report the final short name from the answer (with its random part) and the
-  address `https://<final name>.kainoapp.com`. Say that the setup runs in the background,
-  the user is notified when the app is reachable, and can ask here for the state at any
-  time.
+- Success with `dashboard_url`: put that link first, on a line of its own, and send the
+  user there. Tell the user that the app is created, what the answer's `next` says
+  happens now, and that the dashboard shows live what happens with the app (its setup,
+  the planning of the work packages, the build progress of the features), where they
+  answer the open questions right away, one at a time; any of them may stay empty. Then
+  report the final short name from the answer (with its random part) and the address
+  `https://<final name>.kainoapp.com`, and that they can also ask here for the state at
+  any time.
+- Success without `dashboard_url`: report the final short name from the answer (with its
+  random part) and the address `https://<final name>.kainoapp.com`. Say that the setup
+  runs in the background, the user is notified when the app is reachable, and can ask
+  here for the state at any time.
 - `project_exists`: the answer names the existing app. Do not create anything; offer
   `/kainoapp:new-phase` for that app.
 - A validation error: show it, fix the named field with the user, and ask for the go again
@@ -123,8 +134,10 @@ Never put a design file into this call.
 
 ## 8. Report the state
 
-When the user asks how far the app is, call `project-status` with the final short name
-and answer in a few lines:
+When the user asks how far the app is, call `project-status` with the final short name.
+When the answer carries `dashboard_url`, put that link first and send the user there:
+the dashboard shows the setup, the planning, the open questions and the build progress
+live. Then answer in a few lines:
 
 - `setup.state`: `running` or `queued` (the app is being set up), `completed` (it is set up) or
   `failed` (the operator has been notified; the answer carries no error text by design).

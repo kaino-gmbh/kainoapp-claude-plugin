@@ -18,6 +18,9 @@ never tell the user that it was created, planned or built, and never make up its
 every fact about the app comes from a tool answer. If a call fails or was not made, say
 so.
 
+A link to the app's dashboard comes only from `dashboard_url` in a tool answer, exactly as
+it stands. When an answer has no `dashboard_url`, say nothing about a dashboard.
+
 ## 1. Choose the app
 
 Call `project-list` and let the user pick the app (show the display name and the short
@@ -141,10 +144,18 @@ money. Call nothing until the user clearly says yes.
 Call `phase-create-from-design` with `project`, `name`, `description` and `upload`. Never
 put a design file into this call.
 
-- `planning` is `started`: the work package exists and the features are being planned;
-  the user is notified when they are ready. Asked for the state later, call
-  `project-status` with the `project` and report the work package with its features per
-  status.
+The answer names `planning` once the work package is created. Then, when it carries
+`dashboard_url`, put that link first, on a line of its own, and send the user there: the
+work package is in place, and the dashboard shows live what happens with the app (its
+setup, the planning of the work packages, the build progress of the features), where
+they answer the open questions right away, one at a time; any of them may stay empty.
+Then report the outcome:
+
+- `planning` is `started`: the work package exists and the features are being planned.
+  With `dashboard_url`, tell the user what the answer's `next` says; without it, say that
+  the user is notified when the features are ready. Asked for the state later, call
+  `project-status` with the `project`, put its `dashboard_url` first when the answer
+  carries one, and report the work package with its features per status.
 - `planning` is anything else (`not_started` while the app is still being set up): the
   work package and the design are stored, the planning has not started. Tell the user
   what the answer's `next` says.
